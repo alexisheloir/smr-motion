@@ -1,0 +1,15 @@
+<Model name="tentacle" geometry="tentacle.geo">
+	<Joint name="Bone" jointIndex="1">
+		<Joint name="Bone.000" tx="0" ty="1.07748e-07" tz="-0.553382" jointIndex="2">
+			<Joint name="Bone.001" tx="0" ty="0" tz="-0.472109" rx="2.65865e-05" ry="-1.16914" rz="-2.2951e-07" jointIndex="3">
+				<Joint name="Bone.002" tx="0" ty="-2.84217e-14" tz="-0.469715" rx="-1.90301e-05" ry="0.566048" rz="-1.14679e-08" jointIndex="4">
+					<Joint name="Bone.003" tx="-1.39698e-09" ty="1.42109e-14" tz="-0.455267" rx="6.56677e-06" ry="0.603091" rz="-6.34111e-08" jointIndex="5">
+						<Joint name="Bone.004" tx="0" ty="-2.84217e-14" tz="-0.455241" rx="1.50401e-05" ry="1.1124" rz="2.45191e-07" jointIndex="6" />
+					</Joint>
+				</Joint>
+			</Joint>
+		</Joint>
+	</Joint>
+
+	<Mesh name="" material="TentacleSkin.material.xml" batchStart="0" batchCount="2484" vertRStart="0" vertREnd="1785" />
+</Model>

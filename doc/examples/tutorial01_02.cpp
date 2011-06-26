@@ -1,0 +1,1 @@
+SMRKinematicChain *m_kinematicChain;

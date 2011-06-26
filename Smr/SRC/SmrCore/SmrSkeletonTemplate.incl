@@ -1,0 +1,1121 @@
+//
+// C++ Implementation: SMRSkeletonT
+//
+// Description: 
+//
+//
+// Author:  <Alexis HELOIR>, (C) 2007
+//
+// Copyright: See COPYING file that comes with this distribution
+
+template <typename JOINT>
+SMRSkeletonT<JOINT>::SMRSkeletonT (string _name) : m_name(_name),m_mode(RELATIVEMODE),m_rotationOrder(ROTATIONFIRST)
+{
+}
+template <typename JOINT>
+SMRSkeletonT<JOINT>::SMRSkeletonT (SMRModeType _mode, SMRTransformationOrderType _rotationOrder,string _name) : m_name(_name),m_mode(_mode),m_rotationOrder(_rotationOrder)
+{
+}
+
+template <typename JOINT>
+SMRSkeletonT<JOINT>::SMRSkeletonT (bool _mode, bool _rotationOrder, string _name) : m_name(_name),m_mode(static_cast<SMRModeType>(_mode)),m_rotationOrder(static_cast<SMRTransformationOrderType>(_rotationOrder))
+{
+}
+
+template <typename JOINT>
+SMRSkeletonT<JOINT>::SMRSkeletonT(const SMRSkeletonT<JOINT> & _skeleton)
+{
+  *this = _skeleton;
+}
+
+//destructor
+template <typename JOINT>
+SMRSkeletonT<JOINT>::~SMRSkeletonT()
+{
+  //if (!m_shared) 
+  for_each( m_joints.begin(), m_joints.end(), DeleteObjectPtr());
+  m_joints.clear();
+
+}
+
+template <typename JOINT>
+JOINT * SMRSkeletonT<JOINT>::getJointByName( const string & _name ) const
+{
+  typename map<string, JOINT *>::const_iterator cit = m_jointMap.find(_name);
+  if (cit != m_jointMap.end())
+  {
+    return (cit->second);
+  }else
+  {
+    return NULL;
+  }
+}
+
+template <typename JOINT>
+int SMRSkeletonT<JOINT>::getJointIndex( const string & _name )
+{
+  for(unsigned int i = 0; i < getNumJoints(); ++i )
+  {
+    if (getJoint(i)->getName() ==  _name) 
+      return i;
+  }
+  return 0;
+}
+
+template <typename JOINT>
+void SMRSkeletonT<JOINT>::insertJoint( unsigned int index, JOINT * _joint )
+{
+  // update joints vector
+  m_joints.insert( m_joints.begin() + index, _joint );
+  // update map
+  m_jointMap[_joint->getName()]= _joint;
+}
+
+// Enqueue a joint
+template <typename JOINT>
+void SMRSkeletonT<JOINT>::insertJoint(JOINT * _joint)
+{
+  // update joints vector
+  m_joints.push_back(_joint);
+  // update map
+  m_jointMap[_joint->getName()] = _joint;
+}
+
+// Inverse rotations
+template <typename JOINT>
+void SMRSkeletonT<JOINT>::inverse()
+{
+  typename vector<JOINT *>::iterator jointIterator;
+  for (jointIterator = m_joints.begin(); jointIterator < m_joints.end(); jointIterator++)
+  {
+    (*jointIterator)->setOrientation(Inverse((*jointIterator)->getOrientation()));
+  }
+}
+
+// Remove a joint
+template <typename JOINT>
+void SMRSkeletonT<JOINT>::removeJoint( unsigned int _index)
+{
+  JOINT * joint = getJoint( _index );
+  m_jointMap.erase(joint->getName());
+
+  typename vector<JOINT *>::iterator jointIterator;
+  jointIterator = m_joints.begin();
+  jointIterator = jointIterator+_index;
+  m_joints.erase(jointIterator);
+
+  delete(joint);
+}
+
+// Remove a joint
+template <typename JOINT>
+void SMRSkeletonT<JOINT>::flush()
+{
+  m_jointMap.clear();
+  m_joints.clear();
+}
+
+
+// clone operation, create new instance
+template <typename JOINT>
+SMRSkeletonT<JOINT> * SMRSkeletonT<JOINT>::clone( void )
+{
+  SMRSkeletonT<JOINT> *cpy = new SMRSkeletonT<JOINT>;
+  cpy->m_mode =  getMode();
+  cpy->m_rotationOrder =  getRotationOrder();
+  for( unsigned int i = 0; i < getNumJoints(); ++i )
+  {
+    cpy->insertJoint( i, new JOINT( *m_joints[i] ) );
+  }
+  return cpy;
+}
+
+// Check end joints
+template <typename JOINT>
+void SMRSkeletonT<JOINT>::checkEndJoints()
+{
+  JOINT * joint;
+  for(unsigned int i = 0 ; i < getNumJoints() ;i++ )
+  {
+    bool test = true;
+    joint = getJoint(i);
+    for( unsigned int j = i ; j < getNumJoints() ;j++ )
+    {
+      if (getJoint(j)->getParentName()==joint->getName())
+      {test = false;break;}
+
+    }
+    joint->setEndJoint(test);
+  }
+}
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::setMode(SMRModeType _mode)
+{
+  // if desired mode is different from current
+  if (_mode!=m_mode)
+  {
+    if (_mode)
+    {
+      // switch to relative coordinates
+      switchToRelative();
+      m_mode = _mode;
+    }else
+    {
+      m_mode = _mode;
+      // switch to absolute coordinates
+      switchToAbsolute();
+    }
+  }
+}
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::switchToRelative()
+{
+  // ALl frames are expressed in absolute coordinates
+  // swith them to relative
+  JOINT * joint;
+  SMRVector3 pos;
+  SMRQuaternion quat;
+  SMRQuaternion parentQuat;
+
+  // the transformation depends on the rotation order
+  if (m_rotationOrder == TRANSLATIONFIRST)
+  {
+    for( int i = getNumJoints() - 1 ; i >= 0; --i )
+    {
+      joint = getJoint(i);
+      // has parent?
+      if( strcmp(joint->getParentName().c_str(),""))
+      {
+        pos = joint->getPosition();
+        if(joint->isEndJoint())
+        {
+          SMRVector3 endPos = joint->getEndLength();
+          endPos = endPos - pos;
+          quat = joint->getOrientation();
+          quat = Inverse(quat);
+          quat.rotate(endPos);
+          joint->setEndLength(endPos);
+        }
+        // get parent
+        JOINT * parentJoint = getJointByName( joint->getParentName() );
+        // compute new position
+        pos =  pos - parentJoint->getPosition();
+        quat = parentJoint->getOrientation();
+        quat = Inverse(quat);
+        //quat.normalize();
+        quat.rotate(pos);
+        joint->setPosition (pos);
+        joint->setOrientation( (quat * joint->getOrientation()).normalize());
+      }
+    }
+  }
+  else
+  {
+    for( int i = getNumJoints() - 1 ; i >= 0; --i )
+    {
+      joint = getJoint(i);
+      // has parent?
+      if( strcmp(joint->getParentName().c_str(),""))
+      {
+        pos = joint->getPosition();
+        // get parent
+        JOINT * parentJoint = getJointByName( joint->getParentName() );
+
+        // compute new position
+        pos =  pos - parentJoint->getPosition();
+        quat = joint->getOrientation();
+        quat = Inverse(quat);
+        quat.normalize();
+        quat.rotate(pos);
+        joint->setPosition (pos);
+
+        parentQuat = parentJoint->getOrientation();
+        parentQuat = Inverse(parentQuat);
+        parentQuat.normalize();
+
+        // compute new orientation
+        joint->setOrientation( (parentQuat * joint->getOrientation()).normalize() );
+
+      }
+      else
+      {
+        pos = joint->getPosition();
+        Inverse(joint->getOrientation()).rotate(pos);
+        joint->setPosition (pos);
+      }
+
+    }
+  }
+}
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::switchToAbsolute()
+{
+  // All frames are expressed in relative coordinates
+  // switch them to absolute
+  JOINT *	joint;
+  SMRVector3 pos;
+  SMRVector3 endPos;
+  SMRVector3 nullRot(0.0,0.0,0.0);
+  // the transformation depends on the rotation order
+  if (m_rotationOrder == TRANSLATIONFIRST)
+  {
+    for( unsigned int i = 0; i < getNumJoints(); i++ )
+    {
+      joint = getJoint(i);
+      pos = joint->getPosition();
+      // has parent?
+      if( strcmp(joint->getParentName().c_str(),""))
+      {
+        // get parent
+        JOINT *	parentJoint = getJointByName( joint->getParentName() );
+        parentJoint->getOrientation().rotate( pos );
+        joint->setPosition (pos+parentJoint->getPosition());
+        joint->setOrientation( (parentJoint->getOrientation() * joint->getOrientation()).normalize());
+      }
+      if( joint->isEndJoint() )
+      {
+        pos = joint->getEndLength();
+        joint->getOrientation().rotate( pos );
+        //joint->setEndLength(pos);
+        joint->setEndLength(pos + joint->getPosition());
+        //joint->setEndLength(SMRVector3(0.0,0.0,0.0));
+      }
+    }
+  }
+  else //ROTATIONFIRSTMODE
+  {
+    for( unsigned int i = 0; i < getNumJoints(); ++i )
+    {
+      joint = getJoint(i);
+      pos = joint->getPosition();
+      // has parent?
+      if( strcmp(joint->getParentName().c_str(),""))
+      {
+        // get parent
+        JOINT *	parentJoint = getJointByName( joint->getParentName() );
+        joint->setOrientation( (parentJoint->getOrientation() * joint->getOrientation()).normalize());
+        joint->getOrientation().rotate( pos );
+        joint->setPosition (pos + parentJoint->getPosition());
+        if (joint->isEndJoint())
+        {
+          joint->setEndLength(joint->getPosition());
+        }
+      } else
+      {
+        joint->getOrientation().rotate( pos );
+        joint->setPosition (pos);
+      }
+    }
+  }
+}
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::setRotationOrder (SMRTransformationOrderType _rotationOrder)
+{
+  // if desired mode is different from current
+  if (m_rotationOrder!=_rotationOrder)
+  {
+    m_rotationOrder = _rotationOrder;
+    if (m_rotationOrder == TRANSLATIONFIRST)
+      // switch to TRANSLATIONFIRST mode (like BVH mocap format)
+      switchToTranslationFirst();
+    else
+      // switch to ROTATIONFIRST mode (like ASF/AMC mocap format)
+      switchToRotationFirst();
+  }
+}
+
+template <typename JOINT>
+void 
+SMRSkeletonT<JOINT>::switchToRotationFirst()
+{
+  JOINT *	joint;
+
+  SMRVector3 prevPos(0.0f,0.0f,0.0f);
+  SMRQuaternion id;
+  id.identity();
+
+  for( unsigned int i = getNumJoints() - 1 ; i > 0; --i  )
+  {
+    joint = getJoint( i );
+    SMRQuaternion rot = joint->getOrientation();
+    if (joint->isEndJoint())
+    {
+      JOINT *	newEndJoint = new JOINT(true);
+      newEndJoint->setName(joint->getName() + "EndJoint");
+      newEndJoint->setParentName(joint->getName());
+      newEndJoint->setPosition(joint->getEndLength());
+      newEndJoint->setOrientation(rot);
+      joint->setEndJoint(false);
+      joint->setEndLength(SMRVector3(0.0f,0.0f,0.0f));
+      insertJoint(i+1,newEndJoint);
+    }
+    JOINT* parentJoint = getJointByName( joint->getParentName() );
+    joint->setOrientation(parentJoint->getOrientation());
+  }
+  joint = getJoint(0);
+  joint->setOrientation( id );
+}
+
+//template <typename JOINT>
+//void 
+//SMRSkeletonT<JOINT>::switchToRotationFirst()
+//{
+//  JOINT *	joint;
+//
+//  std::vector<SMRVector3> boneLengthStack;
+//  boneLengthStack.push_back(SMRVector3(0.0,0.0,0.0));
+//  SMRQuaternion id;
+//  id.identity();
+//
+//
+//  for( unsigned int i = this->getNumJoints() - 1 ; i >= 0 ; --i  )
+//  {
+//    joint = getJoint( i );
+//    SMRQuaternion rot = joint->getOrientation();
+//    if (joint->isEndJoint())
+//    {
+//      boneLengthStack.push_back(joint->getPosition());
+//      joint->setPosition(joint->getEndLength());
+//    }else
+//    {
+//      SMRVector3 pos = boneLengthStack.back();
+//      boneLengthStack.pop_back();
+//      boneLengthStack.push_back(joint->getPosition());
+//      joint->setPosition(pos);    
+//    }
+//    if (joint->hasParent())
+//    {
+//      if (joint->getName().find("ghost") != string::npos)//ghost found here, handle the ghost then remove it
+//      {
+//        
+//      }else if (joint->getParentName() != getJoint(i-1)->getName())//fork here, should create a ghost joint
+//      {
+//        string ghostJointName = "ghost" + joint->getParentName() + "_" + joint->getName();
+//        JOINT* ghostJoint = new JOINT(false);
+//        ghostJoint->setName(ghostJointName);
+//        ghostJoint->setPosition(boneLengthStack.back());
+//        boneLengthStack.pop_back();
+//        ghostJoint->setParentName(joint->getParentName());
+//        joint->setParentName(ghostJoint->getName());
+//        insertJoint(i,ghostJoint);
+//        // handle the joint we forgot (the one in the first branching)
+//        int forgottenJointIndex = getJointIndex(ghostJoint->getParentName()) + 1 ;
+//        joint = getJoint(forgottenJointIndex);
+//        if (joint->getName().find("ghost") == string::npos) // ghost joint has not been created yet
+//        {
+//          ghostJoint = new JOINT(false);
+//          ghostJoint->setPosition(boneLengthStack.back());
+//          ghostJoint->setParentName(joint->getParentName());
+//          joint->setParentName(ghostJoint->getName());
+//          ghostJointName = "ghost" + joint->getParentName() + "_" + joint->getName();
+//          insertJoint(forgottenJointIndex,ghostJoint);
+//          boneLengthStack.pop_back();
+//          //JOINT* parentJoint = getJointByName( joint->getParentName() );
+//          //if (m_mode == RELATIVEMODE && currentPos == nullVector)
+//          //  parentJoint->setPosition(nullVector);
+//          //else
+//          //  parentJoint->setPosition(joint->getPosition());
+//        }
+//      }
+//    }
+//  }
+//  JOINT *rootJoint;
+//  rootJoint = getJoint(0);
+//  JOINT *newRootJoint;
+//  newRootJoint = new JOINT(false);
+//  newRootJoint->setPosition(boneLengthStack.back());
+//  newRootJoint->setOrientation(id);
+//  newRootJoint->setName("__SMR_root_SMR__");
+//  rootJoint->setParentName(newRootJoint->getName());
+//  insertJoint(0,newRootJoint);
+
+//}
+
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::switchToTranslationFirst()
+{
+  JOINT *	joint;
+
+  SMRQuaternion prevQuat;
+  SMRVector3 prevPos;
+
+  for( int i = getNumJoints() - 1 ; i >= 0; --i  )
+  {
+    joint = getJoint( i );
+    SMRQuaternion rot = joint->getOrientation();
+    if (joint->isEndJoint())
+    {
+      // this endJoint has been created by a previous switchToRotationFirst function, we can erase it
+      if (joint->getName().find("EndJoint") != string::npos ) 
+      {
+        JOINT *	parentJoint = getJointByName(joint->getParentName());
+        parentJoint->setEndJoint(true);
+        SMRVector3 nullVector(0.0,0.0,0.0);
+        SMRVector3 currentPos(joint->getPosition());
+        if (m_mode == RELATIVEMODE && currentPos == nullVector)
+          parentJoint->setEndLength(nullVector);
+        else
+          parentJoint->setEndLength(joint->getPosition());
+        SMRQuaternion quat = parentJoint->getOrientation();
+        parentJoint->setOrientation(joint->getOrientation());
+        prevQuat = quat;
+        removeJoint(i);
+        --i;
+      } else
+      {
+        JOINT *	parentJoint = getJointByName(joint->getParentName());
+        SMRVector3 nullVector(0.0,0.0,0.0);
+        if (m_mode == RELATIVEMODE)
+          joint->setEndLength(nullVector);
+        else
+          joint->setEndLength(joint->getPosition());
+        SMRQuaternion quat = parentJoint->getOrientation();
+        parentJoint->setOrientation(joint->getOrientation());
+        prevQuat = quat;
+        //removeJoint(i);
+        //delete(joint);
+        //--i;
+      }
+    }
+    else
+    {
+      SMRQuaternion quat = joint->getOrientation();
+      joint->setOrientation(prevQuat);
+      prevQuat = quat;
+    }
+  }
+}
+
+
+// returns the list of children of a given joint
+template <typename JOINT>
+vector <unsigned int> 
+SMRSkeletonT<JOINT>::getJointChildren( unsigned int _numJoint )
+{
+  vector <unsigned int> result;
+  string jointName = getJoint(_numJoint)->getName();
+  for (unsigned int i = _numJoint ; i < getNumJoints() ; i++) 
+  {
+    if (getJoint(i)->getParentName() == jointName)
+      result.push_back(i);
+  }
+  return result;
+}
+
+template <typename JOINT>
+vector <unsigned int> 
+SMRSkeletonT<JOINT>::getJointChildren( string _name )
+{ 
+  vector <unsigned int> result;
+  for (unsigned int i = 0 ; i < getNumJoints() ; i++) 
+  {
+    if (getJoint(i)->getParentName() == _name)
+      result.push_back(i);
+  }
+  return result;
+}
+
+template <typename JOINT>
+bool
+SMRSkeletonT<JOINT>::hasJointChildren(unsigned int jointIndex)
+{
+  vector<unsigned int> result=getJointChildren(jointIndex);
+  if(result.size()==0)return false;
+  else return true;
+}
+
+template <typename JOINT>
+SMRSkeletonT<JOINT> SMRSkeletonT<JOINT>::getSubSkeleton(const SMRSkeletonT<JOINT> & _subSkeleton) const
+{
+  std::vector<string> subSkeletonStrings;
+  for( unsigned int i = 0; i < _subSkeleton.getNumJoints(); ++i )
+  {
+    JOINT* currentJoint = _subSkeleton.getJoint(i);
+    subSkeletonStrings.push_back(currentJoint->getName());
+  }
+  vector<string>::iterator jointNameIterator;
+  SMRSkeletonT<JOINT> subSkeleton(m_mode,m_rotationOrder);
+
+  for (jointNameIterator = subSkeletonStrings.begin(); jointNameIterator < subSkeletonStrings.end(); jointNameIterator++ )
+  {
+    JOINT *	subJoint  = _subSkeleton.getJointByName(*jointNameIterator);
+    JOINT *	currJoint = this->getJointByName(*jointNameIterator);
+    JOINT *	newJoint  = new JOINT(*subJoint);
+    if (currJoint)
+    {
+      newJoint->setPosition(currJoint->getPosition());
+      newJoint->setOrientation(currJoint->getOrientation());
+    }
+    subSkeleton.insertJoint( newJoint );
+  }
+  return subSkeleton;
+}
+
+// operator = overload
+template <typename JOINT>
+SMRSkeletonT<JOINT> &
+SMRSkeletonT<JOINT>::operator=(const SMRSkeletonT<JOINT> & _skeleton)
+{
+  for_each( m_joints.begin(), m_joints.end(), DeleteObjectPtr());
+  m_joints.clear();
+  m_name = _skeleton.getName();
+  m_mode = _skeleton.getMode();
+  m_rotationOrder = _skeleton.getRotationOrder();
+  for( unsigned int i = 0; i < _skeleton.getNumJoints(); ++i )
+    insertJoint( i, new JOINT( *_skeleton.getJoint(i)) );
+
+  return (*this);
+}
+
+// operator += overload
+template <typename JOINT>
+SMRSkeletonT<JOINT> &
+SMRSkeletonT<JOINT>::operator+=(const SMRSkeletonT<JOINT> & _skeleton)
+{
+  if ( &_skeleton != NULL )
+  {
+    if (m_mode != _skeleton.getMode()) this->setMode(_skeleton.getMode());
+    // then, verify rot_Order
+    if (m_rotationOrder != _skeleton.getRotationOrder()) this->setRotationOrder(m_rotationOrder);
+    // finally, update the joints
+
+    //assume "this" is the reference skeleton (i.e, the skeleton that contains root joint.)
+    JOINT * jointToWeld = _skeleton.getJoint(0);
+
+    // find common joint, where to weld
+    JOINT * refJoint = getJointByName(jointToWeld->getName());
+    if (!refJoint)
+    {
+      insertJoint( 0, new JOINT(*_skeleton.getJoint(0)) );
+      refJoint = getJoint(0);
+      refJoint->setEndJoint(false);
+    }else
+    { if (_skeleton.getNumJoints() > 1)
+      {
+        int jointIndex = this->getJointIndex(refJoint->getName());
+        if( m_rotationOrder == ROTATIONFIRST && getJoint(jointIndex + 1)->isEndJoint())
+          removeJoint(jointIndex + 1);//remove the end Site dedicated joint
+      }
+      refJoint->setPosition(jointToWeld->getPosition());
+      refJoint->setOrientation(jointToWeld->getOrientation());
+      refJoint->setEndJoint(false);
+    }
+
+    // add subsequent joint
+    for( unsigned int i = 1; i < _skeleton.getNumJoints(); ++i )
+    {
+      int j = this->getJointIndex(refJoint->getName());
+      // if joint exists, replace it
+      JOINT *currentJoint = _skeleton.getJoint(i); 
+      JOINT* tmpJoint = getJointByName( currentJoint->getName() );
+      if (tmpJoint && tmpJoint != currentJoint) // no need to replace same joint already allocated in memory
+      {
+        *tmpJoint = *_skeleton.getJoint(i);
+      }
+      // else, simply add it
+      else if (!tmpJoint)
+      { 
+        insertJoint( j+i, new JOINT(*_skeleton.getJoint(i)) );
+      }
+    }
+  }
+  return (*this);
+}
+
+  /**
+  *  \brief operator *= overload (splice two skeleton together).
+  */
+template <typename JOINT>
+SMRSkeletonT<JOINT> &
+SMRSkeletonT<JOINT>::operator*=(const SMRSkeletonT<JOINT> & _skeleton)
+{
+  if ( &_skeleton != NULL )
+  {
+    if (m_mode != _skeleton.getMode()) this->setMode(_skeleton.getMode());
+    // then, verify rot_Order
+    if (m_rotationOrder != _skeleton.getRotationOrder()) this->setRotationOrder(m_rotationOrder);
+    // finally, update the joints
+
+    //assume "this" is the reference skeleton (i.e, the skeleton that contains root joint.)
+    JOINT * jointToWeld = _skeleton.getJoint(0);
+
+    // find common joint, where to weld
+    JOINT * refJoint = getJointByName(jointToWeld->getName());
+    if (!refJoint)
+    {
+      insertJoint( 0, new JOINT(*_skeleton.getJoint(0)) );
+      refJoint = getJoint(0);
+      refJoint->setEndJoint(false);
+    }else
+    {
+      int jointIndex = this->getJointIndex(refJoint->getName());
+      if( m_rotationOrder == ROTATIONFIRST && getJoint(jointIndex + 1)->isEndJoint())
+        removeJoint(jointIndex + 1);//remove the end Site dedicated joint
+      //refJoint->setPosition(jointToWeld->getPosition());
+      SMRQuaternion id;
+      id.identity();
+      refJoint->setOrientation(jointToWeld->getOrientation() * refJoint->getOrientation() );
+      //refJoint->setOrientation(jointToWeld->getOrientation());      
+      refJoint->setEndJoint(false);
+    }
+
+    // add subsequent joint
+    for( unsigned int i = 1; i < _skeleton.getNumJoints(); ++i )
+    {
+      int j = this->getJointIndex(refJoint->getName());
+      // if joint exists, replace it
+      JOINT *currentJoint = _skeleton.getJoint(i); 
+      JOINT* tmpJoint = getJointByName( currentJoint->getName() );
+      if (tmpJoint && tmpJoint != currentJoint) // no need to replace same joint already allocated in memory
+      {
+        SMRQuaternion id;
+        id.identity();
+        //cout << currentJoint->getOrientation() << endl;
+        tmpJoint->setOrientation(currentJoint->getOrientation() * tmpJoint->getOrientation()); 
+        //tmpJoint->setOrientation(currentJoint->getOrientation()); 
+      }
+      // else, simply add it
+      else if (!tmpJoint)
+      { 
+        insertJoint( j+i, new JOINT(*_skeleton.getJoint(i)) );
+      }
+    }
+  }
+  return (*this);
+}
+
+
+// operator += overload
+template <typename JOINT>
+SMRSkeletonT<JOINT> &
+SMRSkeletonT<JOINT>::combine(const SMRSkeletonT<JOINT> & _skeleton, double _amount )
+{
+  if ( &_skeleton != NULL )
+  {
+    if (m_mode != _skeleton.getMode()) this->setMode(_skeleton.getMode());
+    // then, verify rot_Order
+    if (m_rotationOrder != _skeleton.getRotationOrder()) this->setRotationOrder(m_rotationOrder);
+    // finally, update the joints
+
+    //assume "this" is the reference skeleton (i.e, the skeleton that contains root joint.)
+    JOINT * jointToWeld = _skeleton.getJoint(0);
+
+    // find common joint, where to weld
+    JOINT * refJoint = getJointByName(jointToWeld->getName());
+    if (!refJoint)
+    {
+      insertJoint( 0, new JOINT(*_skeleton.getJoint(0)) );
+      refJoint = getJoint(0);
+      refJoint->setEndJoint(false);
+    }else
+    {
+      int jointIndex = this->getJointIndex(refJoint->getName());
+      if( m_rotationOrder == ROTATIONFIRST && getJoint(jointIndex + 1)->isEndJoint())
+        removeJoint(jointIndex + 1);//remove the end Site dedicated joint
+
+      JOINT *currentJoint = jointToWeld; 
+
+
+      SMRQuaternion currentOrientation = currentJoint->getOrientation();
+      SMRQuaternion tmpOrientation = refJoint->getOrientation();
+
+      currentOrientation = Slerp(tmpOrientation,currentOrientation,_amount);
+      refJoint->setOrientation(currentOrientation);
+      if(!refJoint->hasParent() && m_mode == RELATIVEMODE)
+      {
+        SMRVector3 currentPosition = currentJoint->getPosition();
+        SMRVector3 tmpPosition = refJoint->getPosition();
+        currentPosition = tmpPosition*(1.0f-_amount) + currentPosition*_amount;
+        //currentPosition = tmpPosition + currentPosition*_amount*0.5; // ugly hack for intel demo
+        refJoint->setPosition(currentPosition);
+      }
+      else if (m_mode == ABSOLUTEMODE)
+      {
+        SMRVector3 currentPosition = currentJoint->getPosition();
+        SMRVector3 tmpPosition = refJoint->getPosition();
+        currentPosition = tmpPosition*(1.0f-_amount) + currentPosition*_amount;
+        refJoint->setPosition(currentPosition);
+      }
+
+    }
+
+    // add subsequent joint
+    for( unsigned int i = 1; i < _skeleton.getNumJoints(); ++i )
+    {
+      int j = this->getJointIndex(refJoint->getName());
+      // if joint exists, replace it
+      JOINT *currentJoint = _skeleton.getJoint(i); 
+      JOINT* tmpJoint = getJointByName( currentJoint->getName() );
+
+      if (tmpJoint && tmpJoint != currentJoint) // no need to replace same joint already allocated in memory
+      {
+        SMRVector3 tmpPosition = tmpJoint->getPosition();
+
+        SMRQuaternion currentOrientation = currentJoint->getOrientation();
+        SMRQuaternion tmpOrientation = tmpJoint->getOrientation();
+
+        currentOrientation = Slerp(tmpOrientation,currentOrientation,_amount);
+        tmpJoint->setOrientation(currentOrientation);
+        if(!tmpJoint->hasParent() || m_mode == ABSOLUTEMODE)
+        {
+          SMRVector3 currentPosition = currentJoint->getPosition();
+          SMRVector3 tmpPosition = tmpJoint->getPosition();
+          currentPosition = tmpPosition*(1.0f-_amount) + currentPosition*_amount;
+          tmpJoint->setPosition(currentPosition);
+        }
+      }
+      // else, simply add it
+      else if (!tmpJoint)
+      { 
+        insertJoint( j+i, new JOINT(*_skeleton.getJoint(i)) );
+      }
+    }
+  }
+  return (*this);
+}
+
+
+template <typename JOINT>
+bool
+SMRSkeletonT<JOINT>::operator==(const SMRSkeletonT<JOINT> & _skeleton) const
+{
+  if (_skeleton.getNumJoints()!=this->getNumJoints()) return false;
+  for( unsigned int i = 0; i < _skeleton.getNumJoints(); ++i )
+    if (_skeleton.getJoint(i)->getName() != this->getJoint(i)->getName()) return false;
+  return true;
+}
+
+template <typename JOINT>
+bool
+SMRSkeletonT<JOINT>::operator!=(const SMRSkeletonT<JOINT> & _skeleton) const
+{
+  if (_skeleton.getNumJoints()!=this->getNumJoints()) return true;
+  for( unsigned int i = 0; i < _skeleton.getNumJoints(); ++i )
+    if (_skeleton.getJoint(i)->getName() != this->getJoint(i)->getName()) return true;
+  return false;
+}
+
+// display skeleton
+template <typename JOINT>
+ostream & operator<<(ostream & out, const SMRSkeletonT<JOINT> & _skeleton)
+{
+  out << "Skeleton. Number of joints : " << _skeleton.getNumJoints() << " Mode : " << _skeleton.getMode() << endl;
+  for( unsigned int i = 0; i < _skeleton.getNumJoints(); ++i )
+  {
+    JOINT *	joint = _skeleton.getJoint(i);
+    out << " joint " << i << " : " << joint->getName() << ", parent: " << joint->getParentName() ;
+    if (joint->isEndJoint() ) out << "  <-- End joint";
+    out << endl;
+  }
+  return out;
+}
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::changeBindPose(const SMRSkeletonT<JOINT> &_bindPose)
+{
+  SMRModeType initialMode = this->getMode();
+  SMRTransformationOrderType initialRotationOrder = this->getRotationOrder();
+  this->setMode(RELATIVEMODE);
+  // instanciate a non const copy of _bindPose 
+  SMRSkeletonT refSkeleton;
+  refSkeleton = _bindPose;
+
+  // we use this map to backup joint orientations
+  std::map<string, SMRQuaternion> heapRotHeap;
+
+  // declaration of local useful quaternion instances
+  SMRQuaternion currentRotation, refRotation, heapRotation, invHeapRotation;
+  //declaration of the Joint we will work with
+  SMRJoint *currentJoint;
+  //declaration of the corresponding joint in the bindPose
+  SMRJoint *refJoint, *parentRefJoint;
+
+  //switch bindPose to translationFirst
+  refSkeleton.setRotationOrder(TRANSLATIONFIRST);
+  //switch currentSkeleton to translationFist
+  this->setRotationOrder(TRANSLATIONFIRST);
+  refSkeleton.setMode(ABSOLUTEMODE);
+
+  for (unsigned int i = 0; i<getNumJoints(); i++ )
+  {
+    currentJoint = getJoint(i);
+    refJoint = refSkeleton.getJoint(i);
+    currentRotation = currentJoint->getOrientation();
+    currentRotation.normalize();
+    refRotation = refJoint->getOrientation();
+    refRotation.normalize();
+    if (currentJoint->hasParent()) 
+    {
+      parentRefJoint = refSkeleton.getJointByName(currentJoint->getParentName());
+      currentJoint->setPosition(refJoint->getPosition()-parentRefJoint->getPosition());
+      if (currentJoint->isEndJoint())
+      {
+        currentJoint->setEndLength(refJoint->getEndLength() - refJoint->getPosition());
+      }
+    }
+  }
+
+  refSkeleton.setMode(RELATIVEMODE);
+
+  // start with first joint (assume it is root joint)
+  currentJoint = getJoint(0);
+  refJoint = refSkeleton.getJoint(0);
+
+  currentRotation = currentJoint->getOrientation();
+  currentRotation.normalize();
+
+  refRotation = refJoint->getOrientation();
+  refRotation.normalize();
+  refRotation = Inverse(refRotation);
+  refRotation.normalize();
+
+  currentRotation = (currentRotation * refRotation).normalize();
+  currentJoint->setOrientation(currentRotation);
+
+  heapRotHeap[currentJoint->getName()] = Inverse(refRotation);
+
+  for (unsigned int j = 1; j<getNumJoints(); j++ )
+  {
+    heapRotation.identity();
+    currentJoint = getJoint(j);
+    refJoint = refSkeleton.getJoint(j);
+    currentRotation = currentJoint->getOrientation();
+    currentRotation.normalize();
+    refRotation = refJoint->getOrientation();
+    refRotation.normalize();
+    if (currentJoint->hasParent()) 
+    {
+      heapRotation = heapRotHeap[currentJoint->getParentName()];
+    }
+    invHeapRotation = Inverse(heapRotation);
+    invHeapRotation.normalize();
+    refRotation = Inverse(refRotation);
+    refRotation.normalize();
+    currentRotation = (heapRotation * currentRotation * refRotation * invHeapRotation ).normalize();
+    currentJoint->setOrientation(currentRotation);
+
+    refRotation = Inverse(refRotation);
+    heapRotation = (heapRotation * refRotation);
+    heapRotation.normalize();
+    heapRotHeap[currentJoint->getName()] = heapRotation;
+  }
+  this->setMode(initialMode);
+  this->setRotationOrder(initialRotationOrder);
+}
+
+template <typename JOINT>
+void
+SMRSkeletonT<JOINT>::rotate(const SMRQuaternion &rot)
+{
+  setMode(RELATIVEMODE);
+  setRotationOrder(TRANSLATIONFIRST);
+  SMRVector3 rootBone;
+
+  JOINT *rootJoint = getJoint(0);
+  rootJoint->setOrientation(rot * rootJoint->getOrientation());
+  rootBone = rootJoint->getPosition();
+  rot.rotate(rootBone);
+  rootJoint->setPosition(rootBone);    
+}
+
+
+
+// interpolate between skeleton
+template <typename JOINT>
+SMRSkeletonT<JOINT> interpolateSkeletons( const SMRSkeletonT<JOINT> & _skeletonA, const SMRSkeletonT<JOINT> & _skeletonB, float _alpha)
+{
+  SMRSkeletonT<JOINT> myInterpolatedSkel;
+  SMRSkeletonT<JOINT> skelA,skelB;
+  skelA = _skeletonA;
+  skelB = _skeletonB;
+
+  if (skelB.getMode()!=skelA.getMode())
+    skelB.setMode( skelA.getMode() );
+  if (skelB.getRotationOrder()!=skelA.getRotationOrder())
+    skelB.setRotationOrder( skelA.getRotationOrder() );
+  myInterpolatedSkel.setMode(skelA.getMode());
+  myInterpolatedSkel.setRotationOrder(skelA.getRotationOrder());
+
+  JOINT * jointA, * jointB, * newJoint;
+  for( unsigned int i = 0; i < skelA.getNumJoints(); ++i )
+  {
+    jointA = skelA.getJoint(i);
+    jointB = skelB.getJointByName(jointA->getName());
+    // if there is a corresponding joint in skeleton B
+    if(jointB)
+    {
+      newJoint = new JOINT(*jointA);
+
+      newJoint->setPosition( jointA->getPosition() + (jointB->getPosition() - jointA->getPosition()) * _alpha );
+      newJoint->setOrientation( Slerp( jointA->getOrientation(), jointB->getOrientation(), static_cast<double>(_alpha) ) );
+
+    }
+    else
+      // only performs copy of jointA
+      newJoint = new JOINT(*jointA);
+
+    myInterpolatedSkel.insertJoint(newJoint);
+  }
+  return myInterpolatedSkel;
+}
+
+// interpolate between skels, avoid local copy
+template <typename JOINT>
+void 
+interpolateSkeletons( const SMRSkeletonT<JOINT> & _skeletonA, const SMRSkeletonT<JOINT> & _skeletonB, SMRSkeletonT<JOINT> * _skelOut, float _alpha)
+{
+  JOINT *jointA, *jointB, *newJoint;
+  for( unsigned int i = 0; i < _skelOut->getNumJoints(); ++i )
+  {
+    newJoint = _skelOut->getJoint(i);
+    jointA = _skeletonA.getJointByName(newJoint->getName());
+    jointB = _skeletonB.getJointByName(newJoint->getName());
+    // if there is a corresponding joint in skeleton A and B
+    if(jointB&&jointA)
+    {
+      newJoint->setPosition( jointA->getPosition() + (jointB->getPosition() - jointA->getPosition()) * _alpha );
+      newJoint->setOrientation( Slerp( jointA->getOrientation(), jointB->getOrientation(), static_cast<double>(_alpha) ) );
+    }//else do nothing
+  }
+}
+
+template <typename JOINT>
+void InterpolateSkeletons(  SMRSkeletonT<JOINT> *_skel1, SMRSkeletonT<JOINT> *_skel2, SMRSkeletonT<JOINT> *_skel3, SMRSkeletonT<JOINT> *_skel4, SMRSkeletonT<JOINT> &_interpolatedSkeleton,
+                          float _alpha, float _tension,float _bias, float _continuity )
+{
+  for( unsigned int i=0; i < _skel1->getNumJoints(); i++ )
+  {
+    SMRQuaternion firstQuat  = _skel1->getJoint(i)->getOrientation();
+    SMRQuaternion secondQuat = _skel2->getJoint(i)->getOrientation();
+    SMRQuaternion thirdQuat  = _skel3->getJoint(i)->getOrientation();
+    SMRQuaternion fourthQuat = _skel4->getJoint(i)->getOrientation();
+    SMRQuaternion resultQuat = Interpolate(firstQuat, secondQuat, thirdQuat, fourthQuat, _alpha, _tension, _bias, _continuity);
+    _interpolatedSkeleton.getJoint(i)->setOrientation(resultQuat);
+
+    if(i==0)
+    {
+      SMRVector3 pos1  = (_skel1->getJoint(0))->getPosition();//((prevSkel.getJoint(0))->getPosition())*2.0 - ((currSkel.getJoint(0))->getPosition());
+      SMRVector3 pos2  = (_skel2->getJoint(0))->getPosition();
+      SMRVector3 pos3  = (_skel3->getJoint(0))->getPosition();
+      SMRVector3 pos4  = (_skel4->getJoint(0))->getPosition();  
+      _interpolatedSkeleton.getJoint(i)->setPosition(TBCInterpolation(pos1, pos2, pos3, pos4, _tension, _bias, _tension, _alpha));
+    }
+  }
+}
+
+//Squad Interpolation outputing just the asked skeleton, not filling a vector.
+template <typename JOINT>
+void
+InterpolateSkeletons( map<float,SMRSkeletonT<JOINT>* const > & _keyPoses, SMRSkeletonT<JOINT> &_interpolatedSkeleton ,float _alpha, float _tension=0.0,float _bias=0.0, float _continuity=0.0)
+{
+  //iterator to go through the keyPose vector
+  typename std::map<float, SMRSkeletonT<JOINT>* const>::iterator keyPosIt = _keyPoses.begin();
+  //skeleton pointerss storing the poses to interpolate
+  SMRSkeletonT<JOINT>*  currSkel; 
+  SMRSkeletonT<JOINT>*  prevSkel;
+  if(_keyPoses.begin() == _keyPoses.end())
+  {
+    //LOG_FATAL(logger,"error, trying ot interpolate over an empty keyPoses vector");
+  }
+  if( _keyPoses.size()==1)
+  { 
+    _interpolatedSkeleton += *(_keyPoses.begin()->second);
+    //LOG_WARN(logger,"trying ot interpolate over keyPoses vector containing only one pose");
+  }
+  if( _keyPoses.size()==2)
+  { 
+    keyPosIt = _keyPoses.begin();
+    prevSkel = keyPosIt->second;
+    keyPosIt++;
+    currSkel = keyPosIt->second;
+    float alpha = keyPosIt->first;
+    _interpolatedSkeleton += interpolateSkeletons(*prevSkel,*currSkel,_alpha);
+    //LOG_WARN(logger,"trying to interpolate over keyPoses vector containing two poses");
+  }
+  if( _keyPoses.size()>2)
+  {
+    SMRSkeletonT<JOINT> *firstSkel, *secondSkel, *thirdSkel, *fourthSkel; 
+    keyPosIt = _keyPoses.begin();
+    float tCurrent=0.0f;
+    do{
+      keyPosIt++;
+      tCurrent = keyPosIt->first;
+    }while(tCurrent < _alpha && _alpha < 1.0);
+    if (_alpha < 1.0)
+    {
+      thirdSkel = keyPosIt->second;
+      float t2 = keyPosIt->first;
+
+      keyPosIt++;
+      if (keyPosIt != _keyPoses.end())
+      {
+        fourthSkel = keyPosIt->second;
+      }else
+      {
+        fourthSkel = thirdSkel;
+      }
+
+      keyPosIt--;
+      keyPosIt--;
+
+      secondSkel = keyPosIt->second;
+      float t1 = keyPosIt->first;
+
+      if (keyPosIt != _keyPoses.begin())
+      {
+        keyPosIt--;
+        firstSkel = keyPosIt->second;
+      }else
+      {
+        firstSkel = secondSkel;
+      }
+
+      float tau = (_alpha-t1)/(t2-t1);
+      InterpolateSkeletons(firstSkel,secondSkel,thirdSkel,fourthSkel, _interpolatedSkeleton, tau, _tension, _bias, _continuity);
+    }else
+    {
+      keyPosIt = _keyPoses.end();
+      keyPosIt--;
+      fourthSkel = keyPosIt->second;
+      _interpolatedSkeleton += *fourthSkel;
+    }
+  }
+}
+
+
+
+// compute distance between poses
+template <typename JOINT>
+double 
+PointsCloudDistance(const SMRSkeletonT<JOINT> & _skeletonA, const SMRSkeletonT<JOINT> & _skeletonB)
+{
+  SMRSkeletonT<JOINT> skelA,skelB;
+  skelA = _skeletonA;
+  skelB = _skeletonB;
+
+  assert(skelA==skelB);
+
+  JOINT  * jointA, * jointB;
+  skelA.setMode(ABSOLUTEMODE);
+  skelB.setMode(ABSOLUTEMODE);
+  double distance = 0;
+  for( unsigned int i = 0; i < _skeletonA.getNumJoints(); ++i )
+  {
+    jointA = skelA.getJoint(i);
+    jointB = skelB.getJoint(i);
+    distance += Distance( jointB->getPosition() , jointA->getPosition() );
+  }
+  return distance;
+}
+

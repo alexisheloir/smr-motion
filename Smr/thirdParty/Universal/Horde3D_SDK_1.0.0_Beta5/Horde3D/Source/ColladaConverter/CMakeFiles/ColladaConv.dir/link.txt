@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/ColladaConv.dir/converter.o CMakeFiles/ColladaConv.dir/daeMain.o CMakeFiles/ColladaConv.dir/main.o CMakeFiles/ColladaConv.dir/optimizer.o CMakeFiles/ColladaConv.dir/utils.o  -o ../../../../../../Horde3D/Binaries/Linux/ColladaConv -rdynamic 

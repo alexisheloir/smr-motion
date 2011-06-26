@@ -1,0 +1,1 @@
+m_ikSolver=new SMRInvJacSolver(m_kinematicChain);

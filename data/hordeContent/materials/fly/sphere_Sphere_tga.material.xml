@@ -1,0 +1,6 @@
+<Material>
+	<Shader source="shaders/model.shader" />
+        <ShaderFlag name="_F01_Skinning" />
+
+	<TexUnit unit="0" map="sphere_sphere.tga" />
+</Material>

@@ -1,0 +1,1 @@
+m_ikConstraint->setPosition(SMRVector3(tx,ty,tz));

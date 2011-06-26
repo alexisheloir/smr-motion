@@ -1,0 +1,2 @@
+HordeResource m_tentacleRes;
+HordeNode m_tentacleNode;

@@ -1,0 +1,1 @@
+m_ikSolver=new SMRAnalyticalIKSolver(m_kinematicChain);

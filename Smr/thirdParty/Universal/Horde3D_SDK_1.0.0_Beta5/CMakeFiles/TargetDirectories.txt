@@ -1,0 +1,6 @@
+/home/jm/Downloads/Horde3D_SDK_1.0.0_Beta5/Horde3D/Samples/Chicago/CMakeFiles/Chicago.dir
+/home/jm/Downloads/Horde3D_SDK_1.0.0_Beta5/Horde3D/Source/ColladaConverter/CMakeFiles/ColladaConv.dir
+/home/jm/Downloads/Horde3D_SDK_1.0.0_Beta5/Horde3D/Source/Horde3DEngine/CMakeFiles/Horde3D.dir
+/home/jm/Downloads/Horde3D_SDK_1.0.0_Beta5/Horde3D/Source/Horde3DUtils/CMakeFiles/Horde3DUtils.dir
+/home/jm/Downloads/Horde3D_SDK_1.0.0_Beta5/Horde3D/Samples/Knight/CMakeFiles/Knight.dir
+/home/jm/Downloads/Horde3D_SDK_1.0.0_Beta5/Horde3D/Samples/glfw/CMakeFiles/glfw.dir

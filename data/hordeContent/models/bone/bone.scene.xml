@@ -1,0 +1,5 @@
+<Model name="bone" geometry="models/bone/bone.geo">
+
+	<Mesh name="Sphere" material="models/bone/Material_001.material.xml" tx="0.00509" ty="0.00228" tz="-0.01419" batchStart="0" batchCount="336" vertRStart="0" vertREnd="64" />
+	<Mesh name="Cube" material="models/bone/Material.material.xml" tx="0.00719" ty="0" tz="-0.01419" batchStart="336" batchCount="96" vertRStart="65" vertREnd="84" />
+</Model>

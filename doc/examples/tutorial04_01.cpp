@@ -1,0 +1,1 @@
+SMRMotion m_motion;

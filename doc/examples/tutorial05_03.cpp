@@ -1,0 +1,1 @@
+m_ikConstraint=new SMRIKConstraint(SMRVector3(0,0,0),SMRVector3(0,0,0),currentJoint->getName());

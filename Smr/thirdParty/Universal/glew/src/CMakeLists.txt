@@ -1,0 +1,12 @@
+PROJECT(GLEW)
+
+INCLUDE_DIRECTORIES(
+	    ${GLEW_SOURCE_DIR}
+	    ${GLEW_INCLUDE_DIR}
+)
+
+ADD_LIBRARY(glew  STATIC
+                  glew.c
+)
+
+SOURCE_GROUP(Headers REGULAR_EXPRESSION "[.]h$")

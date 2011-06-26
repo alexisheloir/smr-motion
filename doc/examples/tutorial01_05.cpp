@@ -1,0 +1,1 @@
+currentJoint=new SMRKinematicJoint();

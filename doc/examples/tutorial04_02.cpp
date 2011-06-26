@@ -1,0 +1,1 @@
+m_motion=loadMotionFromAcclaim(getFileName("..\\..\\..\\Data\\acclaim\\08.asf"),getFileName("..\\..\\..\\Data\\acclaim\\08_normal_walk.amc"));

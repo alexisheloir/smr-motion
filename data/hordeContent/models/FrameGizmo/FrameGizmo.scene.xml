@@ -1,0 +1,7 @@
+<Model name="FrameGizmo" geometry="models/FrameGizmo/FrameGizmo.geo">
+
+	<Mesh name="Sphere" material="models/FrameGizmo/Material.material.xml" tx="-0.00014" ty="0" tz="-8e-005" sx="0.08025" sy="0.08025" sz="0.08025" batchStart="0" batchCount="336" vertRStart="0" vertREnd="63" />
+	<Mesh name="Cone_002" material="models/FrameGizmo/Material_001.material.xml" tx="0.00449" ty="-0.95643" tz="-0.00013" rx="-0" ry="0" rz="180" sx="0.15902" sy="0.15902" sz="0.15902" batchStart="336" batchCount="216" vertRStart="64" vertREnd="116" />
+	<Mesh name="Cone" material="models/FrameGizmo/Material_002.material.xml" tx="-0.00012" ty="0.00013" tz="0.956" rx="-0" ry="-90" rz="-90" sx="0.15902" sy="0.15902" sz="0.15902" batchStart="552" batchCount="216" vertRStart="117" vertREnd="169" />
+	<Mesh name="Cone_001" material="models/FrameGizmo/Material.material.xml" tx="0.95656" ty="-0.00024" tz="-0.00085" rx="-0" ry="0" rz="-90" sx="0.15902" sy="0.15902" sz="0.15902" batchStart="768" batchCount="216" vertRStart="170" vertREnd="222" />
+</Model>

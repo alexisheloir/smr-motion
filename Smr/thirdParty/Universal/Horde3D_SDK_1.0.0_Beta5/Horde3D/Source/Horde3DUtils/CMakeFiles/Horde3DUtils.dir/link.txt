@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -O3 -DNDEBUG  -shared -Wl,-soname,libHorde3DUtils.so -o /home/jm/prj/smr/trunk/Smr/linuxBuild/lib/Release/libHorde3DUtils.so CMakeFiles/Horde3DUtils.dir/main.o /home/jm/prj/smr/trunk/Smr/linuxBuild/lib/Release/libHorde3D.so -lGL -Wl,-rpath,/home/jm/prj/smr/trunk/Smr/linuxBuild/lib/Release: 

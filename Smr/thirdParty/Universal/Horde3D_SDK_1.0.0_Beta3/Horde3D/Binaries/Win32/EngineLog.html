@@ -1,0 +1,497 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Horde3D Log</title>
+<style type="text/css">
+body, html {
+background: #000000;
+width: 1000px;
+font-family: Arial;
+font-size: 16px;
+color: #C0C0C0;
+}
+h1 {
+color : #FFFFFF;
+border-bottom : 1px dotted #888888;
+}
+.box {
+border : 1px dotted #818286;
+padding : 5px;
+margin: 5px;
+width: 950px;
+background-color : #292929;
+}
+.err {
+color: #EE1100;
+font-weight: bold
+}
+.warn {
+color: #FFCC00;
+font-weight: bold
+}
+.info {
+color: #C0C0C0;
+}
+.debug {
+color: #CCA0A0;
+}
+</style>
+</head>
+
+<body>
+<h1>Horde3D Log</h1>
+<h3>Horde3D 1.0.0 Beta3</h3>
+<div class="box">
+<table>
+<tr>
+<td width="100">0.001</td>
+<td class="info">Initializing OpenGL renderer using OGL '2.1.2' by 'NVIDIA Corporation' on 'Quadro FX 570M/PCI/SSE2'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Pipeline resource 'pipelines/hdr.pipeline.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Pipeline resource 'pipelines/forward.pipeline.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Material resource 'overlays/font.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Material resource 'overlays/panel.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Material resource 'overlays/logo.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding SceneGraph resource 'models/sphere/sphere.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding SceneGraph resource 'models/knight/knight.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Animation resource 'animations/knight_order.anim'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding Animation resource 'animations/knight_attack.anim'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Adding SceneGraph resource 'particles/particleSys1/particleSys1.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.017</td>
+<td class="info">Loading resource 'pipelines/hdr.pipeline.xml'</td>
+</tr>
+<tr>
+<td width="100">0.018</td>
+<td class="info">Adding Material resource 'pipelines/globalSettings.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.018</td>
+<td class="info">Adding Material resource 'pipelines/postHDR.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Loading resource 'pipelines/forward.pipeline.xml'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Loading resource 'overlays/font.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Adding Shader resource 'shaders/overlay.shader'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Adding Texture resource 'overlays/font.tga'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Loading resource 'overlays/panel.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Adding Texture resource 'textures/common/white.tga'</td>
+</tr>
+<tr>
+<td width="100">0.020</td>
+<td class="info">Loading resource 'overlays/logo.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Adding Texture resource 'overlays/logo.tga'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Loading resource 'models/sphere/sphere.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Adding Geometry resource 'models/sphere/sphere.geo'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Adding Material resource 'models/sphere/stones.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Loading resource 'models/knight/knight.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Adding Geometry resource 'models/knight/knight.geo'</td>
+</tr>
+<tr>
+<td width="100">0.021</td>
+<td class="info">Adding Material resource 'models/knight/knight.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.022</td>
+<td class="info">Loading resource 'animations/knight_order.anim'</td>
+</tr>
+<tr>
+<td width="100">0.024</td>
+<td class="info">Loading resource 'animations/knight_attack.anim'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Loading resource 'particles/particleSys1/particleSys1.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding Material resource 'particles/particleSys1/particle1.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding ParticleEffect resource 'particles/particleSys1/particle1.particle.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding Material resource 'particles/particleSys1/particle2.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding ParticleEffect resource 'particles/particleSys1/particle2.particle.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Loading resource 'pipelines/globalSettings.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding Texture resource 'textures/ambientMap.dds'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Loading resource 'pipelines/postHDR.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding Shader resource 'shaders/postHDR.shader'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Loading resource 'shaders/overlay.shader'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding Code resource 'shaders/overlay.shader:VS_OVERLAY'</td>
+</tr>
+<tr>
+<td width="100">0.025</td>
+<td class="info">Adding Code resource 'shaders/overlay.shader:FS_OVERLAY'</td>
+</tr>
+<tr>
+<td width="100">0.026</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/overlay.shader@OVERLAY[0] ----</td>
+</tr>
+<tr>
+<td width="100">0.033</td>
+<td class="info">Loading resource 'overlays/font.tga'</td>
+</tr>
+<tr>
+<td width="100">0.040</td>
+<td class="info">Loading resource 'textures/common/white.tga'</td>
+</tr>
+<tr>
+<td width="100">0.043</td>
+<td class="info">Loading resource 'overlays/logo.tga'</td>
+</tr>
+<tr>
+<td width="100">0.045</td>
+<td class="info">Loading resource 'models/sphere/sphere.geo'</td>
+</tr>
+<tr>
+<td width="100">0.045</td>
+<td class="info">Loading resource 'models/sphere/stones.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.045</td>
+<td class="info">Adding Shader resource 'shaders/model.shader'</td>
+</tr>
+<tr>
+<td width="100">0.045</td>
+<td class="info">Adding Texture resource 'textures/models/layingrock.jpg'</td>
+</tr>
+<tr>
+<td width="100">0.045</td>
+<td class="info">Adding Texture resource 'textures/models/layingrockBump.tga'</td>
+</tr>
+<tr>
+<td width="100">0.047</td>
+<td class="info">Loading resource 'models/knight/knight.geo'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Loading resource 'models/knight/knight.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Adding Texture resource 'models/knight/knight.jpg'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Adding Texture resource 'models/skybox/skybox.dds'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Loading resource 'particles/particleSys1/particle1.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Adding Shader resource 'shaders/particle.shader'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Adding Texture resource 'textures/particles/particle1.tga'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Loading resource 'particles/particleSys1/particle1.particle.xml'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Loading resource 'particles/particleSys1/particle2.material.xml'</td>
+</tr>
+<tr>
+<td width="100">0.051</td>
+<td class="info">Loading resource 'particles/particleSys1/particle2.particle.xml'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Loading resource 'textures/ambientMap.dds'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Loading resource 'shaders/postHDR.shader'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Adding Code resource 'shaders/postHDR.shader:VS_FSQUAD'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Adding Code resource 'shaders/postHDR.shader:FS_BRIGHTPASS'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Adding Code resource 'shaders/utilityLib/fragPostProcess.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Adding Code resource 'shaders/postHDR.shader:FS_BLUR'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">Adding Code resource 'shaders/postHDR.shader:FS_FINALPASS'</td>
+</tr>
+<tr>
+<td width="100">0.052</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/postHDR.shader@FINALPASS[0] ----</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Loading resource 'shaders/model.shader'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/model.shader:VS_GENERAL'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/utilityLib/vertCommon.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/utilityLib/vertSkinning.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/model.shader:FS_ATTRIBPASS'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/utilityLib/fragDeferredWrite.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/model.shader:VS_SHADOWMAP'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/model.shader:FS_SHADOWMAP'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/model.shader:FS_LIGHTING'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/utilityLib/fragLighting.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Adding Code resource 'shaders/model.shader:FS_AMBIENT'</td>
+</tr>
+<tr>
+<td width="100">0.058</td>
+<td class="info">Loading resource 'textures/models/layingrock.jpg'</td>
+</tr>
+<tr>
+<td width="100">0.072</td>
+<td class="info">Loading resource 'textures/models/layingrockBump.tga'</td>
+</tr>
+<tr>
+<td width="100">0.081</td>
+<td class="info">Loading resource 'models/knight/knight.jpg'</td>
+</tr>
+<tr>
+<td width="100">0.086</td>
+<td class="info">Loading resource 'models/skybox/skybox.dds'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Loading resource 'shaders/particle.shader'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Adding Code resource 'shaders/particle.shader:VS_SHADOWMAP'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Adding Code resource 'shaders/utilityLib/vertParticle.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Adding Code resource 'shaders/particle.shader:FS_SHADOWMAP'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Adding Code resource 'shaders/particle.shader:VS_TRANSLUCENT'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Adding Code resource 'shaders/particle.shader:FS_TRANSLUCENT'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Loading resource 'textures/particles/particle1.tga'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">Loading resource 'shaders/utilityLib/fragPostProcess.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.089</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/postHDR.shader@BRIGHTPASS[0] ----</td>
+</tr>
+<tr>
+<td width="100">0.102</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/postHDR.shader@BLUR[0] ----</td>
+</tr>
+<tr>
+<td width="100">0.108</td>
+<td class="info">Loading resource 'shaders/utilityLib/vertCommon.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.108</td>
+<td class="info">Loading resource 'shaders/utilityLib/vertSkinning.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.108</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@SHADOWMAP[0] ----</td>
+</tr>
+<tr>
+<td width="100">0.121</td>
+<td class="info">Loading resource 'shaders/utilityLib/fragDeferredWrite.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.121</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@ATTRIBPASS[4] ----</td>
+</tr>
+<tr>
+<td width="100">0.135</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@ATTRIBPASS[1] ----</td>
+</tr>
+<tr>
+<td width="100">0.276</td>
+<td class="info">Loading resource 'shaders/utilityLib/fragLighting.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.276</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@LIGHTING[4] ----</td>
+</tr>
+<tr>
+<td width="100">0.300</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@LIGHTING[1] ----</td>
+</tr>
+<tr>
+<td width="100">0.428</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@AMBIENT[4] ----</td>
+</tr>
+<tr>
+<td width="100">0.442</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/model.shader@AMBIENT[9] ----</td>
+</tr>
+<tr>
+<td width="100">0.568</td>
+<td class="info">Loading resource 'shaders/utilityLib/vertParticle.glsl'</td>
+</tr>
+<tr>
+<td width="100">0.568</td>
+<td class="info">---- C O M P I L I N G  . S H A D E R . shaders/particle.shader@TRANSLUCENT[0] ----</td>
+</tr>
+<tr>
+<td width="100">0.579</td>
+<td class="info">Adding Camera node 'Camera'</td>
+</tr>
+<tr>
+<td width="100">0.579</td>
+<td class="info">Adding nodes from SceneGraph resource 'models/sphere/sphere.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.579</td>
+<td class="info">Adding nodes from SceneGraph resource 'models/knight/knight.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.579</td>
+<td class="info">Adding nodes from SceneGraph resource 'particles/particleSys1/particleSys1.scene.xml'</td>
+</tr>
+<tr>
+<td width="100">0.579</td>
+<td class="info">Adding Light node 'Light1'</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

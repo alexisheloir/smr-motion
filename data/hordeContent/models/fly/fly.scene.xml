@@ -1,0 +1,6 @@
+<Model name="fly" geometry="models/fly/fly.geo">
+
+	<Mesh name="Sphere" material="models/fly/Untitled.material.xml" batchStart="0" batchCount="192" vertRStart="0" vertREnd="191">
+		<Mesh name="#Sphere" material="models/fly/Untitled.material.xml" batchStart="192" batchCount="5760" vertRStart="192" vertREnd="4031" />
+	</Mesh>
+</Model>
