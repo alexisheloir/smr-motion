@@ -21,14 +21,14 @@ private:
   int m_speed;
 
 public:
-  PoseInterpolation();
+  PoseInterpolation(const std::string &appPath);
   ~PoseInterpolation();
   void onLoadResources();
   void onAddNodes();
   void onUpdate();
 };
 
-PoseInterpolation::PoseInterpolation()
+PoseInterpolation::PoseInterpolation(const std::string &appPath):HordeApplication(appPath)
 {
   //set up camera parameters
   //m_camera.set(5,3,19,7,15,10);
@@ -103,10 +103,10 @@ void PoseInterpolation::onUpdate()
   m_bones.update(&skeleton);
 }
 
-int main()
+int main(int arg, char** argv)
 {
-  PoseInterpolation *application=new PoseInterpolation(); //will be deleted in HordeWindow::release
-  HordeWindow::init("SMRPoseInterpolation - Loading Motion Files",640,480,false,application);
+  PoseInterpolation *application=new PoseInterpolation(argv[0]); //will be deleted in HordeWindow::release
+  HordeWindow::init((char*)"SMRPoseInterpolation - Loading Motion Files",640,480,false,application);
   HordeWindow::run();
   HordeWindow::release();
 }

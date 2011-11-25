@@ -29,6 +29,10 @@ SMRSkeleton loadSkeletonFromBVH(string _filename, SMRTransformationOrderType _ty
 */
 SMRMotion loadMotionFromBVH(string _filename, SMRTransformationOrderType _type = ROTATIONFIRST);
 
+SMRMotion loadMotionFromString(string _content, SMRTransformationOrderType _type);
+
+SMRMotion loadMotionFromStream(istream &_contentStream, SMRTransformationOrderType _type);
+
 /**
  *  /brief Loads an acclaim skeleton into an SMRSkeleton.   
  */
@@ -58,7 +62,7 @@ SMRMotion loadMotionFromVSK(string _skelFileName, string _motionfilename);
 void loadMotionFromVSK(string _skelFileName, string _motionfilename, SMRMotion &_motion);
 
 
-inline bool expect( const string _word, ifstream &_infile )
+inline bool expect( const string _word, istream &_infile )
 {
   string chunk;
   do

@@ -29,7 +29,7 @@ class TestSwivel:public HordeApplication
     SMRSwivel *m_swivel;
     float m_angle;
   public:
-    TestSwivel();
+    TestSwivel(const std::string &appPath);
     ~TestSwivel();
     void release();
     void onLoadResources();
@@ -38,7 +38,7 @@ class TestSwivel:public HordeApplication
     void createKinematicChain();
 };
 
-TestSwivel::TestSwivel():m_angle(0.0f)
+TestSwivel::TestSwivel(const std::string &appPath):HordeApplication(appPath),m_angle(0.0f)
 {
 }
 
@@ -145,10 +145,10 @@ void TestSwivel::onUpdate()
   //Horde3DUtils::showText( angle.str().c_str(), 0, 0.90f, 0.03f, 0, m_fontMatRes );
 }
 
-int main()
+int main(int argc, char** argv)
 {
-  TestSwivel *application=new TestSwivel();
-  HordeWindow::init("TestSwivel",800,600,false,application);
+  TestSwivel *application=new TestSwivel(argv[0]);
+  HordeWindow::init((char*)"TestSwivel",800,600,false,application);
   HordeWindow::run();
   HordeWindow::release();
 }
