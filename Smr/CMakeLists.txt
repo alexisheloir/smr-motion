@@ -23,12 +23,21 @@ SET ( SAMSARA_DATA_PATH
     "Path to the data directory."
 )
 
+#set(LOG4CPLUS_BUILD_TESTING FALSE)
+#set(UNICODE FALSE)
+
 #SET(LOG4CPLUS_INCLUDE ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.0.3/include)
 #SET(LOG4CPLUS_LIBRARIES log4cplus) #U for Unicode, S for static
-ADD_DEFINITIONS (-DLOG4CPLUS_STATIC)
-SET(LOG4CPLUS_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.0.3/include)
+#ADD_DEFINITIONS (-DLOG4CPLUS_STATIC)
+MESSAGE("LOG4CPLUS_LIBRARIES is now: ${LOG4CPLUS_LIBRARIES}")
+MESSAGE("CMAKE_BUILD_TYPE is now: ${CMAKE_BUILD_TYPE}")
+
+#MESSAGE("log4cplus is ${log4cplus}")
+
+
+SET(LOG4CPLUS_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.1.1-rc3/include)
 IF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-  SET(LOG4CPLUS_LIBRARIES log4cplus) #U for Unicode, S for Static, D for Debug
+  SET(LOG4CPLUS_LIBRARIES log4cplusD) #U for Unicode, S for Static, D for Debug
 ELSE(${CMAKE_BUILD_TYPE} MATCHES "Debug")
   SET(LOG4CPLUS_LIBRARIES log4cplus) #U for Unicode, S for Static, D for Debug
 ENDIF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
@@ -100,11 +109,13 @@ IF(UNIX)
 ENDIF(UNIX)
 
 IF(WIN32)
+
     #SET(CMAKE_MFC_FLAG 1)
     
     #SET(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /ob2 /W3"  )
     
     SET(GTEST_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/gtest-1.5.0/include)
+	add_definitions (-D_VARIADIC_MAX=10)
     SET(GLFW_INCLUDE_DIR ${HORDE3D_ROOT_DIR}/Horde3D/Dependencies/Include)
     SET(LIBRARY_OUTPUT_PATH 
         "${SAMSARA_SOURCE_DIR}/../win32Build/lib"
@@ -140,5 +151,29 @@ ENDIF(WIN32)
 SUBDIRS(thirdParty SRC Examples tests Tutorials)
 
 
+# Somehow Horde 3D is putting its libraries in the wrong directory: lib.
+# We copy them from the 'lib' dir to the 'bin' dir.
+IF(WIN32)
 
+	# Dummy target to add the custom commands
+	add_custom_target(Horde3DCopyFix ALL
+		DEPENDS Horde3D Horde3DUtils
+	)
 
+	message("Horde3D libraries will be copied in the right location: ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}")
+	
+	add_custom_command (
+		TARGET Horde3DCopyFix
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy ${LIBRARY_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Horde3D.dll ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}
+	)
+
+	add_custom_command (
+		TARGET Horde3DCopyFix
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy ${LIBRARY_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Horde3DUtils.dll ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}
+	)
+	
+ENDIF(WIN32)

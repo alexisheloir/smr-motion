@@ -13,7 +13,7 @@ INCLUDE_DIRECTORIES(	${SAMSARA_CORE_SOURCE_DIR}
 
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
  
-ADD_EXECUTABLE(eulerVSQuaternion WIN32 MACOSX_BUNDLE
+ADD_EXECUTABLE(eulerVSQuaternion MACOSX_BUNDLE
                                  eulerVSQuaternion.cpp)
 
 TARGET_LINK_LIBRARIES(eulerVSQuaternion newmat common core math renderer io  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${GLEW_LIBRARIES} log4cplus)

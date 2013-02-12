@@ -14,7 +14,7 @@ INCLUDE_DIRECTORIES(	${SAMSARA_NEWMAT_SOURCE_DIR}
 
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
  
-ADD_EXECUTABLE(QuaternionVisualization WIN32 MACOSX_BUNDLE
+ADD_EXECUTABLE(QuaternionVisualization MACOSX_BUNDLE
                                        quatViz.cpp)
 
 TARGET_LINK_LIBRARIES(QuaternionVisualization newmat common math core renderer io  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${GLEW_LIBRARIES} ${LOG4CPLUS_LIBRARIES})

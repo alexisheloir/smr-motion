@@ -32,7 +32,7 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # (http://www.mail-archive.com/cmake@cmake.org/msg04341.html)
 #
 
-ADD_EXECUTABLE(tutorial02 WIN32 MACOSX_BUNDLE 
+ADD_EXECUTABLE(tutorial02 MACOSX_BUNDLE 
                           Tutorial02.cpp)
 
 IF(UNIX)

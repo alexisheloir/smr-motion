@@ -25,7 +25,7 @@
 GLfloat pPosition_light[4];
 
 SMRTimeSerie<SMRQuaternion> serie, serie1 ;
-SMRQuaternion identity;
+SMRQuaternion identityQuaternion;
 SMRQuaternion myQuaternion;
 
 double rotX = M_PI/12.0;
@@ -67,11 +67,11 @@ static void InitScene(void)
   SMRQuaternion q1(1.0,cos(gamma),sin(gamma),-sin(gamma));
   q1.fromEulerAngles(0.01,0.0,0.0);
   q1.normalize();
-  identity = q1;
+  identityQuaternion = q1;
   
 	for (double t=0.0; t<1.0; t+=0.01)
   {
-    serie.add( Slerp(identity,myQuaternion,t).normalize() );
+    serie.add( Slerp(identityQuaternion,myQuaternion,t).normalize() );
   }
 
 	for (double t=0.0; t<1.0; t+=0.1)
@@ -234,7 +234,7 @@ static void DisplayScene(void){
 	// ---------------------------------------------------------------------------------------
 	if(mode)
   { 
-    drawQuaternion(identity,"blue");
+    drawQuaternion(identityQuaternion,"blue");
     drawQuaternion(myQuaternion,"magenta");
   }
   else

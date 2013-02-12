@@ -21,7 +21,7 @@ INCLUDE_DIRECTORIES(
 
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
-ADD_EXECUTABLE(testPhysics WIN32 MACOSX_BUNDLE
+ADD_EXECUTABLE(testPhysics MACOSX_BUNDLE
                            BonePhysics.cpp)
 
 TARGET_LINK_LIBRARIES(testPhysics math newmat common core renderer io utils glfw Horde3D Horde3DUtils BulletDynamics  BulletCollision LinearMath ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW_LIBRARIES} ${LOG4CPLUS_LIBRARIES} )

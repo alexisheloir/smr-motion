@@ -187,7 +187,7 @@ IF (USE_GLUT)
 
 ENDIF(USE_GLUT)
 
-OPTION(BUILD_DEMOS "Set when you want to build the demos" ON)
+OPTION(BUILD_DEMOS "Set when you want to build the demos" OFF)
 IF(BUILD_DEMOS)
   SUBDIRS(Demos)
 ENDIF(BUILD_DEMOS)

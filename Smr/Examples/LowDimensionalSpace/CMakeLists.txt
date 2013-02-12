@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(    ${SAMSARA_LDIM_SOURCE_DIR}
 
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
-ADD_EXECUTABLE(LowDim WIN32 MACOSX_BUNDLE
+ADD_EXECUTABLE(LowDim MACOSX_BUNDLE
                       lowdim.cpp )
 
 #Take pthread lib into account for linux flavoured OSes

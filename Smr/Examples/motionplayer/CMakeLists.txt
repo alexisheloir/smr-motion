@@ -20,7 +20,7 @@ IF(WIN32)
 		 ${SAMSARA_SOURCE_DIR}/thirdParty/win32/lib/)
 ENDIF(WIN32)
 
-ADD_EXECUTABLE(motionplayer WIN32 MACOSX_BUNDLE
+ADD_EXECUTABLE(motionplayer MACOSX_BUNDLE
                             motionplayer.cpp)
 
 IF(WIN32)

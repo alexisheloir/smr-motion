@@ -27,7 +27,7 @@ IF(UNIX)
 		 ${SAMSARA_SOURCE_DIR}/thirdParty/linux_x86_64/lib/)
 ENDIF(UNIX)
 
-ADD_EXECUTABLE(poseInterpolation  WIN32 MACOSX_BUNDLE
+ADD_EXECUTABLE(poseInterpolation  MACOSX_BUNDLE
                                   poseInterpolation.cpp)
 
 IF(UNIX)
