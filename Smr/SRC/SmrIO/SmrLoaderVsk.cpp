@@ -128,6 +128,7 @@ SMRJoint* SmrLoaderVskCreateJoint(SMRSkeleton &_skeletton, xmlNodePtr _currentNo
   cout << endl << currentJointName << " name" << endl;
 
   SMRJoint* currentJoint(new SMRJoint());
+  /*
   currentJoint->setName(currentJointName);
   currentJoint->setEndJoint(false);
   currentJoint->setPosition(0.0e0,0.0e0,0.0e0);
@@ -235,12 +236,14 @@ SMRJoint* SmrLoaderVskCreateJoint(SMRSkeleton &_skeletton, xmlNodePtr _currentNo
     childNode = childNode->next;
   }
   while(childNode != NULL);
+  */
   return currentJoint;
 }
 
 map<string, double> SmrLoaderVskStoreVskParameters(xmlTextReaderPtr _reader)
 {
   map<string, double> parametersMap;
+  /*
   int ret;
   const xmlChar *name;
   ret = xmlTextReaderRead(_reader);
@@ -258,21 +261,23 @@ map<string, double> SmrLoaderVskStoreVskParameters(xmlTextReaderPtr _reader)
     ret = xmlTextReaderRead(_reader);
   }
   while (ret == 1 && xmlStrcmp(name,skeleton));
+  */
   return parametersMap;
 }
 
 SMRSkeleton loadSkeletonFromVSK(string _filePath)
 {
-
+  /*
   map<string, double> parametersMap;
+  
 
   xmlTextReaderPtr reader;
   xmlDoc * doc;
   reader = xmlReaderForFile(_filePath.c_str(), NULL, 0);
   doc = xmlReadFile(_filePath.c_str(), NULL, 0);
-
+  */
   SMRSkeleton  bindPose(RELATIVEMODE,TRANSLATIONFIRST,"vskImport");
-
+  /*
   if (reader != NULL)
   {
 
@@ -320,7 +325,7 @@ SMRSkeleton loadSkeletonFromVSK(string _filePath)
     bindPose.getJoint(i)->setPosition(bindPose.getJoint(i)->getPosition()*0.001);
     bindPose.getJoint(i)->setEndLength(bindPose.getJoint(i)->getEndLength()*0.001);
   }
-
+  */
   return bindPose;
 }
 
