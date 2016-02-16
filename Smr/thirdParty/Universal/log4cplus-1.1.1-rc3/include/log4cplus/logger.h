@@ -121,6 +121,10 @@ namespace log4cplus
          * @param factory A {@link spi::LoggerFactory} implementation that will
          * actually create a new Instance.
          */
+
+		//Adding this function so that Unreal can call this without causing errors from string literals
+		static Logger getInstance();
+
         static Logger getInstance(const log4cplus::tstring& name, spi::LoggerFactory& factory);
 
         /**

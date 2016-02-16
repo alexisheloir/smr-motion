@@ -69,6 +69,7 @@ Logger::getInstance (const log4cplus::tstring& name)
     return getDefaultHierarchy().getInstance(name); 
 }
 
+Logger Logger::getInstance(){ return getInstance("main"); }
 
 Logger 
 Logger::getInstance (const log4cplus::tstring& name,

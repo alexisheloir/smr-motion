@@ -142,7 +142,10 @@ public:
     }
     else
     {
+	  //Only run logging code if code is not being compiled by Unreal 
+	  #ifndef UNREAL_SMR_BINDING
       LOG_FATAL(logger,"SMRSkleton: joint index out of range");
+	  #endif
       exit(1);
     }
   }
