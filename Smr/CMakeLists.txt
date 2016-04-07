@@ -55,6 +55,9 @@ IF(UNIX)
   INCLUDE(FindGLUT)
 
   IF(APPLE)
+    add_definitions(-D__MWERKS__)
+    add_definitions(-D__MACOS__)
+
     SET(LIBRARY_OUTPUT_PATH ${SAMSARA_SOURCE_DIR}/../macBuild/lib)
     SET(EXECUTABLE_OUTPUT_PATH ${SAMSARA_SOURCE_DIR}/../macBuild/bin)
     SET(ARCHIVE_OUTPUT_DIRECTORY ${SAMSARA_SOURCE_DIR}/../macBuild/build)

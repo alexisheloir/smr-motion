@@ -1,1 +1,1 @@
-SUBDIRS(common SmrCore SmrMath SmrRenderer SmrIO SmrUtils)
+SUBDIRS(common SmrMath SmrCore SmrRenderer SmrIO SmrUtils)
