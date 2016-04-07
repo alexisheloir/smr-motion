@@ -35,7 +35,7 @@ MESSAGE("CMAKE_BUILD_TYPE is now: ${CMAKE_BUILD_TYPE}")
 #MESSAGE("log4cplus is ${log4cplus}")
 
 
-SET(LOG4CPLUS_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.1.1-rc3/include)
+SET(LOG4CPLUS_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.2.0/include)
 IF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
   SET(LOG4CPLUS_LIBRARIES log4cplusD) #U for Unicode, S for Static, D for Debug
 ELSE(${CMAKE_BUILD_TYPE} MATCHES "Debug")
