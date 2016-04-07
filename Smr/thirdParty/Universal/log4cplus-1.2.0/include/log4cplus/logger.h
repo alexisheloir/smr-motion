@@ -122,6 +122,8 @@ namespace log4cplus
          * actually create a new Instance.
          */
         static Logger getInstance(const log4cplus::tstring& name, spi::LoggerFactory& factory);
+        
+        static Logger getInstance();
 
         /**
          * Return the root of the default logger hierrachy.
