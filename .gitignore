@@ -18,3 +18,11 @@ macBuild/bin/Debug/.DS_Store
 macBuild/bin/Release/.DS_Store
 
 macBuild/lib/.DS_Store
+
+win32Build/bin/Debug/**
+
+win32Build/bin/Release/**
+
+win32Build/lib/Debug/**
+
+win32Build/lib/Release/**
