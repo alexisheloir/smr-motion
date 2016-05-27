@@ -13,8 +13,11 @@
 #include <iomanip>
 
 using namespace log4cplus;
-
+#ifdef UNREAL_SMR_BINDING
+static Logger logger = Logger::getInstance();
+#else
 static Logger logger = Logger::getInstance("main");
+#endif 
 static BasicConfigurator config;
 
 #define    LOG_TRACE LOG4CPLUS_TRACE

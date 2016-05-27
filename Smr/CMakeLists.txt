@@ -29,13 +29,13 @@ SET ( SAMSARA_DATA_PATH
 #SET(LOG4CPLUS_INCLUDE ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.0.3/include)
 #SET(LOG4CPLUS_LIBRARIES log4cplus) #U for Unicode, S for static
 #ADD_DEFINITIONS (-DLOG4CPLUS_STATIC)
-MESSAGE("LOG4CPLUS_LIBRARIES is now: ${LOG4CPLUS_LIBRARIES}")
-MESSAGE("CMAKE_BUILD_TYPE is now: ${CMAKE_BUILD_TYPE}")
+#MESSAGE("LOG4CPLUS_LIBRARIES is now: ${LOG4CPLUS_LIBRARIES}")
+#MESSAGE("CMAKE_BUILD_TYPE is now: ${CMAKE_BUILD_TYPE}")
 
 #MESSAGE("log4cplus is ${log4cplus}")
 
 
-SET(LOG4CPLUS_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.1.1-rc3/include)
+SET(LOG4CPLUS_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/log4cplus-1.2.0/include)
 IF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
   SET(LOG4CPLUS_LIBRARIES log4cplusD) #U for Unicode, S for Static, D for Debug
 ELSE(${CMAKE_BUILD_TYPE} MATCHES "Debug")
@@ -55,6 +55,9 @@ IF(UNIX)
   INCLUDE(FindGLUT)
 
   IF(APPLE)
+    add_definitions(-D__MWERKS__)
+    add_definitions(-D__MACOS__)
+
     SET(LIBRARY_OUTPUT_PATH ${SAMSARA_SOURCE_DIR}/../macBuild/lib)
     SET(EXECUTABLE_OUTPUT_PATH ${SAMSARA_SOURCE_DIR}/../macBuild/bin)
     SET(ARCHIVE_OUTPUT_DIRECTORY ${SAMSARA_SOURCE_DIR}/../macBuild/build)
@@ -131,8 +134,8 @@ IF(WIN32)
     SET(GUI "Win32")
     SET(GLUT_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/win32/include)
     SET(GLEW_INCLUDE_DIR ${SAMSARA_SOURCE_DIR}/thirdParty/Universal/glew/include)
-    SET(GLUT_LIBRARIES ${SAMSARA_SOURCE_DIR}/thirdParty/win32/lib/glut32.lib)
-    SET(GLEW_LIBRARIES ${SAMSARA_SOURCE_DIR}/thirdParty/win32/lib/glew32.lib)
+    SET(GLUT_LIBRARIES ${SAMSARA_SOURCE_DIR}/thirdParty/win32/lib/glut64.lib)
+    SET(GLEW_LIBRARIES ${SAMSARA_SOURCE_DIR}/thirdParty/win32/lib/glew64.lib)
     SET(GLFW_LIBRARIES glfw.lib)
     SET(HORDE3D_LIBRARIES Horde3D_vc8.lib Horde3DUtils_vc8.lib)
 
