@@ -24,15 +24,17 @@
 #ifndef LOG4CPLUS_CONFIG_HXX
 #define LOG4CPLUS_CONFIG_HXX
 
+//#if(defined(__APPLE__) && defined(__MACH__))
+//#define __MWERKS__
+//#define __MACOS__
+//#endif
+
 #if defined (_WIN32)
 #  include <log4cplus/config/win32.h>
-//#elif (defined(__MWERKS__) && defined(__MACOS__))
-#elif(defined(__APPLE__) && defined(__MACH__))
-#elif ()
+#elif (defined(__MWERKS__) && defined(__MACOS__))
 #  include <log4cplus/config/macosx.h>
 #else
 #  include <log4cplus/config/defines.hxx>
-//#  include <log4cplus/config/macosx.h>
 #endif
 
 #if ! defined (UNICODE) && ! defined (LOG4CPLUS_HAVE_VSNPRINTF_S) \
